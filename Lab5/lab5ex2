@@ -1,0 +1,40 @@
+.data
+	TEXT: .asciiz "please input another integer number\n"
+.text
+
+main: 
+	li $a1 5 # b = 5
+	li $a2 10 # c=10
+	la $v0 5
+	syscall
+	la $t0, ($v0) # $t0 is our input
+	
+	#switch with var $t0
+	beq $t0, 0, cs1
+	beq $t0, 1, cs2
+	beq $t0, 2, cs3
+	j default
+	cs1: # case a = b+c
+	add $a0,$a1,$a2
+	li $v0,1
+	syscall
+	j endsw
+	cs2:#case a =b -c
+	sub $a0,$a1,$a2
+	li $v0,1
+	syscall
+	j endsw
+	cs3:#case a=c-b
+	sub $a0,$a2,$a1
+	li $v0,1
+	syscall
+	j endsw
+	default: # default case
+	la $a0, TEXT
+	li $v0,4
+	syscall
+	endsw:
+	
+	# end program
+	li $v0 10
+	syscall

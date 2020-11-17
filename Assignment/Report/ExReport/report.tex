@@ -1,0 +1,819 @@
+\documentclass[a4paper]{article}
+%\usepackage{vntex}
+%\usepackage[english,vietnam]{babel}
+\usepackage[utf8]{vietnam}
+
+%\usepackage[utf8]{inputenc}
+%\usepackage[francais]{babel}
+\usepackage{a4wide,amssymb,epsfig,latexsym,multicol,array,hhline,fancyhdr}
+\usepackage{float}
+\restylefloat{table}
+\usepackage{amsmath}
+\usepackage{lastpage}
+%\usepackage[lined,boxed,commentsnumbered]{algorithm2e}
+\usepackage{enumerate}
+\usepackage{color}
+\usepackage{graphicx}							% Standard graphics package
+\usepackage{array}
+\usepackage{tabularx, caption}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{rotating}
+\usepackage{graphics}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{epsfig}
+\usepackage{booktabs}% http://ctan.org/pkg/booktabs
+\newcommand{\tabitem}{~~\llap{\textbullet}~~}
+\usepackage{tikz}
+\usetikzlibrary{arrows,snakes,backgrounds}
+\usepackage{hyperref}
+\hypersetup{urlcolor=blue,linkcolor=black,citecolor=black,colorlinks=true} 
+%\usepackage{pstcol} 								% PSTricks with the standard color package
+
+\newcommand{\matr}[1]{\mathbf{#1}}
+\renewcommand{\vec}[1]{\mathbf{#1}}
+\newcommand{\code}[1]{\texttt{#1}}
+\DeclareMathOperator*{\argmax}{\arg\!\max}
+\renewcommand*\descriptionlabel[1]{\hspace\leftmargin$#1$}
+%\DeclarePairedDelimiter\abs{\lvert}{\rvert}
+\usepackage{siunitx}
+\relpenalty=10000
+\binoppenalty=10000
+\usepackage{listings}
+
+\usepackage{fancyhdr}
+\setlength{\headheight}{40pt}
+\pagestyle{fancy}
+\fancyhead{} % clear all header fields
+\fancyhead[L]{
+ \begin{tabular}{rl}
+    \begin{picture}(25,15)(0,0)
+    \put(0,-8){\includegraphics[width=8mm, height=8mm]{hcmut.png}}
+    %\put(0,-8){\epsfig{width=10mm,figure=hcmut.eps}}
+   \end{picture}&
+	%\includegraphics[width=8mm, height=8mm]{hcmut.png} & %
+	\begin{tabular}{l}
+		\textbf{\bf \ttfamily Ho Chi Minh University of Technology}\\
+		\textbf{\bf \ttfamily Department of Computer Science and Engineering}
+	\end{tabular} 	
+ \end{tabular}
+}
+\fancyhead[R]{
+	\begin{tabular}{l}
+		\tiny \bf \\
+		\tiny \bf 
+	\end{tabular}  }
+\fancyfoot{} % clear all footer fields
+\fancyfoot[L]{\scriptsize \ttfamily Group Assignment for Discrete Structure - Year 2017-2018}
+\fancyfoot[R]{\scriptsize \ttfamily Page {\thepage}/\pageref{LastPage}}
+\renewcommand{\headrulewidth}{0.3pt}
+\renewcommand{\footrulewidth}{0.3pt}
+
+
+%%%
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{3}
+\makeatletter
+\newcounter {subsubsubsection}[subsubsection]
+\renewcommand\thesubsubsubsection{\thesubsubsection .\@alph\c@subsubsubsection}
+\newcommand\subsubsubsection{\@startsection{subsubsubsection}{4}{\z@}%
+                                     {-3.25ex\@plus -1ex \@minus -.2ex}%
+                                     {1.5ex \@plus .2ex}%
+                                     {\normalfont\normalsize\bfseries}}
+\newcommand*\l@subsubsubsection{\@dottedtocline{3}{10.0em}{4.1em}}
+\newcommand*{\subsubsubsectionmark}[1]{}
+\makeatother
+
+
+\begin{document}
+
+\begin{titlepage}
+\begin{center}
+VIET NAM NATIONAL UNIVERSITY, HO CHI MINH CITY \\
+HO CHI MINH UNIVERSITY OF TECHNOLOGY\\
+DEPARTMENT OF COMPUTER SCIENCE AND ENGINEERING 
+\end{center}
+
+\vspace{1cm}
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=3cm]{hcmut.png}
+\end{center}
+\end{figure}
+
+\vspace{1cm}
+
+
+\begin{center}
+\begin{tabular}{c}
+\multicolumn{1}{l}{\textbf{{\Large DISCRETE STRUCTURES FOR COMPUTER SCIENCE}}}\\
+~~\\
+\hline
+\\
+\multicolumn{1}{l}{\textbf{{\Large Assignment}}}\\
+\\
+\textbf{{\Huge Naive Bayes Classifier}}\\
+\\
+\hline
+\end{tabular}
+\end{center}
+
+\vspace{3cm}
+
+\begin{table}[h]
+\begin{tabular}{rrl}
+\hspace{5 cm} & Instructor: & Lê Hồng Trang\\
+& Student: & Trần Hoàng Long - 1852545 \\
+& & Phạm Hoàng Hải - 1852020 \\
+& & Phạm Hoàng Tùng -  1852852\\
+& & Trần Nguyễn - 1852740 \\
+\end{tabular}
+\end{table}
+
+\begin{center}
+{\footnotesize Ho Chi Minh City, Nov 2018}
+\end{center}
+\end{titlepage}
+
+
+%\thispagestyle{empty}
+
+\newpage
+\tableofcontents
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+
+	Classification is a form of data analysis that extracts models describing
+	important data classes. Such models, called classifiers, predict categorical
+	(discrete, unordered) class labels.
+
+	One of the major problems encountered by designers of object-oriented
+	software is classification; that is, finding which classes should be
+	grouped together under a shared base class.
+
+	When attempting to perform classification on the problem space, several
+	issues must be addressed. For example, the designer must decide which
+	properties should be used to determine commonality. The classification
+	should also be flexible enough to permit the introduction of new objects
+	into the system which appear to belong to neither class nor appear to have
+	properties of several classes.
+
+	This is a problem faced by other members of the scientific community as
+	well. For example, biologists have traditionally divided living beings into
+	two classes: plants and animals; every living entity must belong to one,
+	and only one, of these classes.
+
+	In this report, we solve the car buying problem using naive Bayes classifier
+	and provide a practical implementation.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Theoretical basis}
+
+	\subsection{Classifier}
+
+		Classification involves supervised learning of a function $f(x)$
+		whose value is nominal, that is, drawn from a finite set of possible
+		values. The learned function is called a classifier. It is given
+		instances $x$ of one or another class, and it must determine
+		which class each instance belongs to; the value $f(x)$ is the
+		classifier’s prediction regarding the class of the instance. For
+		example, an instance might be a particular word in context, and the
+		classification task is to determine its part of speech. The learner
+		is given labeled data consisting of a collection of instances
+		along with the correct answer, that is, the correct class label,
+		for each instance.
+
+		The classification algorithm builds the classifier by analyzing or
+		``learning from'' a training set made up of database tuples and
+		their associated class labels.
+
+	\subsection{Bayes' theorem}
+
+		In probability theory and statistics, Bayes' theorem (alternatively
+		Bayes' law or Bayes' rule) describes the probability of an event,
+		based on prior knowledge of conditions that might be related to the
+		event. For example, if cancer is related to age, then, using Bayes'
+		theorem, a person's age can be used to more accurately assess the
+		probability that they have cancer, compared to the assessment of
+		the probability of cancer made without knowledge of the person's age.
+
+		Bayes' theorem is stated mathematically as the following equation:
+		\[P(A | B) = \frac{P(B | A) P(A)}{P(B)}\]
+		where:
+		\begin{description}
+			\item[A] is an event
+			\item[B] is an event such that $P(B) \neq 0$
+			\item[P(A | B)] is a conditional probability: the likelihood
+			of event $A$ occurring given that $B$ is true
+			\item[P(B | A)] is also a conditional probability: the
+			likelihood of event $B$ occurring given that $A$ is true
+			\item[P(A)] and $P(B)$ are the probabilities of observing $A$ and $B$
+				independently of each other; this is known as the marginal probability
+		\end{description}
+		
+	\subsection{Naive Bayes classifier}
+		Bayesian classifiers are statistical classifiers. They can predict
+		class membership probabilities such as the probability that a
+		given tuple belongs to a particular class.
+
+		For the purpose of the naive Bayes algorithm, an instance is viewed
+		as a $n$-tuple of attribute values: $\vec{a} = (a_1, a_2, \ldots,
+		a_n)$, which each attribute has a set of values $A_1, A_2, \ldots,
+		A_n$. Then the algorithm assign to this instance $P(v | \vec{a})$
+		for each label $v$ from $V$.
+
+		Using Bayes' theorem, the conditional probability above can be
+		decomposed as
+
+		\[P(v | \vec{a}) = \frac{P(v) P(\vec{a} | v)}{P(a)}\]
+
+		Since the denominator is constant across choices of label, we
+		can ignore it.	To reduce computation in evaluating $P(\vec{a}
+		| v)$, the naive assumption of class-conditional independence is
+		made. This presumes that the attributes' values are conditionally
+		independent of one another, given the class label of the tuple.\\
+		\textbf{Further explaination:} The Naive Bayes classifier
+		infers that the probability of a class label given data using a
+		simplifying assumption that the attributes are independent given
+		the label. In other words, attributes cannot affect each others,
+		this property seems to be impossible in real life because true or
+		false information is affect by many unpredicted events and it is
+		hard to collect such a huge data and its attributes.
+ 
+		Thus, given that these attributes are truly independent, we have:
+
+		\begin{equation}
+			\label{eq:product}
+			P(\vec{a} | v) = P(x_1 | V_i) P(x_2 | V_i) \ldots P(x_n | V_i)
+			               = \prod_i{P(x_i | v)}
+		\end{equation}
+
+		We can rewrite equation as follow
+
+		\[P(v | \vec{a}) \propto P(v) \prod_i{P(x_i | v)}\]
+
+		The algorithm estimates $P(v)$ and $P(a_i | v)$ by relative
+		frequency in the training data.
+		\[P(v) = \frac{N(v)}{N}\]
+		\[P(a_i | v) = \frac{N(v, a_i)}{N(v)}\]
+		where:
+		\begin{description}
+			\item $N$ is the number of training sample
+			\item $N(v)$ is the number of training samples for which
+				the label is $v$
+			\item $N(v, a_i)$ is the number of samples for which the
+				label is $v$ and the attribute is $a_i$
+		\end{description}
+
+		But the above formula for $P(a_i | v)$ provides a poor estimate
+		if $N(v,a_i)$ is very small. In extreme case, if $N(v,a_i)=0$,
+		then the whole posterior will be zero. The solution is using the
+		$m$-estimate of probabilities:
+
+		\begin{equation}
+			\label{eq:probattr}
+			P(a_i | v) = \frac{N(v,a_i) + m p(a_i)}{N(v) + m}
+		\end{equation}
+		where:
+		\begin{description}
+			\item $p(a_i)$ is prior estimate of the probability
+			\item $m$ is equivalent sample size
+		\end{description}
+
+		In the absence of other information, we can assume a uniform prior:
+		\begin{equation}
+			\label{eq:priori}
+			p(a_i) = \frac{1}{|A_i|}
+		\end{equation}
+
+		The discussion so far has derived the independent feature model, that is,
+		the naive Bayes probability model. The naive Bayes classifier combines this
+		model with a decision rule. One common rule is to pick the hypothesis that
+		is most probable; this is known as the maximum a posteriori or MAP decision
+		rule. Hence the prediction of the classifier is a subset $V^*$ of $V$:
+		\footnote{
+			Given a function $f: X \to Y$, the arg max over some subset $S$ of $X$ is
+			defined by
+			\[\argmax_{x \in S}{f(x)} = \{x \in S \mid \forall y \in S: f(y) \leq f(x)\}\]
+		}
+		\begin{equation}
+			\label{eq:predict}
+			V^* = \argmax_{v \in V} P(v) \prod_i{P(x_i | v)}
+		\end{equation}
+
+		In practice, the function will only maximize at a single value $v^*$, that
+		is, $V^*$ is a singleton: $V^* = \{v^*\}$. We can safely say that the predicted label is
+		$v^*$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Problem}
+		A person (male or female) usually choose to buy a car with different
+		attributes of the car such as color, type, and origin. Following
+		table gives examples of such car buying.
+
+		\begin{table}[H]
+			\centering
+			\begin{tabular}{@{}cllll@{}} 
+				\toprule
+				No.& Color  & Type  & Origin   & Buyer \\
+				\midrule
+				1  & red    & sport & domestic & male \\ 
+				2  & red    & sport & domestic & female \\
+				3  & red    & sport & domestic & male \\
+				4  & yellow & sport & domestic & female \\
+				5  & yellow & sport & imported & male \\
+				6  & yellow & SUV   & imported & female \\
+				7  & yellow & SUV   & imported & male \\
+				8  & yellow & SUV   & domestic & female \\
+				9  & red    & SUV   & imported & female \\
+				10 & red    & sport & imported & male \\
+				\bottomrule
+			\end{tabular}
+		\end{table}
+
+		So, the question is, given a car with any random property, let's
+		say (red, SUV, imported) (as required by the assignment), should
+		the car be chosen by a male or female?
+
+	\subsection{Recognize the problem}
+
+		Our training data is a set of 10 4-tuples, where each 4-tuple presents 4
+		attributes to an object. Each element of the 4-tuple can have one of the
+		following values:
+		\begin{itemize}
+			\item \textit{red} or \textit{yellow} for the \textit{color} attribute
+			\item \textit{SUV} or \textit{sport} for the \textit{type} attribute
+			\item \textit{domestic} or \textit{imported} for the \textit{origin} attribute
+			\item \textit{female} or \textit{male} for the \textit{buyer} label
+		\end{itemize}
+
+		In this problem, the target attribute, the attribute we want to predict, is
+		\textit{buyer}. The target attribute can be considered as labels for our data.
+
+		So each sample in the training data have 3 attributes and a label
+		\begin{itemize}
+			\item \textit{color} is the first attribute
+			\item \textit{type} is the second attribute
+			\item \textit{origin} is the third attribute
+			\item \textit{buyer} is the label
+		\end{itemize}
+
+		and each attribute and the label has the following set of values
+		\begin{align*}
+			A_1 &= \{\text{red},      \text{yellow}\} \\
+			A_2 &= \{\text{sport},    \text{SUV}\} \\
+			A_3 &= \{\text{domestic}, \text{imported}\} \\
+			V   &= \{\text{female},   \text{male}\}
+		\end{align*}
+
+		The object is the target which is classified by the classifier,
+		specifically in our case: A car with any random properties such
+		as \textbf{(Yellow, Sport, Domestic)}
+
+		To determine the label of the given tuple $\vec{a}=(\text{red},
+		\text{SUV}, \text{imported})$, we need to calculate the
+		probabilities:
+
+		\[P(v=\text{male})   \prod_i{P(a_i \mid v=\text{male}  )}\]
+		\[P(v=\text{female}) \prod_i{P(a_i \mid v=\text{female})}\]
+		where $a_1$ = red, $a_2$ = SUV, $a_3$ = imported
+
+		From the given formula \eqref{eq:predict} by the naive Bayes
+		classification, we can see that our needed variables are:\\
+
+		{
+			\centering
+			\begin{tabular}{ll}
+			$P(v=\text{female})$ & $P(v=\text{male})$ \\
+			$P(a_1=\text{red}\mid v=\text{female})$ &
+			$P(a_1=\text{red}\mid v=\text{male})$ \\
+			$P(a_2=\text{SUV}\mid v=\text{female})$ &
+			$P(a_2=\text{SUV}\mid v=\text{male})$ \\
+			$P(a_3=\text{imported}\mid v=\text{female})$ &
+			$P(a_3=\text{imported}\mid v=\text{male})$
+			\end{tabular}
+		}\\
+
+		To calculate these varibles using formula \eqref{eq:probattr},
+		we also have to find following varible\\
+
+		{
+			\centering
+			\begin{tabular}{ll}
+				$N(v=\text{female})$ & $N(v=\text{male})$ \\
+				$N(a_1=\text{red}\mid v=\text{female})$ &
+				$N(a_1=\text{red}\mid v=\text{male})$ \\
+				$N(a_2=\text{SUV}\mid v=\text{female})$ &
+				$N(a_2=\text{SUV}\mid v=\text{male})$ \\
+				$N(a_3=\text{imported}\mid v=\text{female})$ &
+				$N(a_3=\text{imported}\mid v=\text{male})$
+			\end{tabular}
+		}\\
+
+		After calculating above varibles, we can compare $P(v=\text{male})
+		\prod_i{P(a_i \mid v=\text{male})}$ and \\ $P(v=\text{female})
+		\prod_i{P(a_i \mid v=\text{female})}$. The label correspond to
+		greater value will be the label of the object.
+
+
+	\subsection{Calculation}
+
+		All the values needed for the formula \eqref{eq:probattr} are
+		computed in the following table:
+		\begin{table}[H]
+			\centering
+			\begin{tabular}{@{}rSSS@{}}
+				\toprule
+									 & {$a_1=\text{red}$} & {$a_2=\text{SUV}$} &
+									 {$a_3=\text{imported}$} \\
+				\midrule
+				$v=\text{female}$\\
+				$N(v)$     & 5               & 5                & 5 \\
+				$N(v,a_i)$ & 2               & 3                & 2 \\
+				$p(a_i)$   & 0.5             & 0.5              & 0.5 \\
+				$m$        & 3               & 3                & 3 \\
+				\midrule
+				$v=\text{male}$ \\
+				$N(v)$     & 5               & 5                & 5 \\
+				$N(v,a_i)$ & 3               & 1                & 3 \\
+				$p(a_i)$   & 0.5             & 0.5              & 0.5 \\
+				$m$        & 3               & 3                & 3 \\
+				\bottomrule
+			\end{tabular}
+		\end{table}
+
+		Now we simply apply equation \eqref{eq:probattr} using the values above
+		\begin{align*}
+			P(a_1=\text{red}\mid v=\text{female})      = \frac{2+3 \cdot 0.5}{5+3} = \frac{7}{16} \\
+			P(a_2=\text{SUV}\mid v=\text{female})      = \frac{3+3 \cdot 0.5}{5+3} = \frac{9}{16} \\
+			P(a_3=\text{imported}\mid v=\text{female}) = \frac{2+3 \cdot 0.5}{5+3} = \frac{7}{16} \\
+			P(a_1=\text{red}\mid v=\text{male})        = \frac{3+3 \cdot 0.5}{5+3} = \frac{9}{16} \\
+			P(a_2=\text{SUV}\mid v=\text{male})        = \frac{1+3 \cdot 0.5}{5+3} = \frac{5}{16} \\
+			P(a_3=\text{imported}\mid v=\text{male})   = \frac{3+3 \cdot 0.5}{5+3} = \frac{9}{16}
+		\end{align*}
+
+		Since $N(v=\text{female})=N(v=\text{male})=5$ and $N=10$, we
+		have \[P(v=\text{female}) = P(v=\text{male}) = \frac{5}{10} =
+		\frac{1}{2}\]
+
+		To classify, we caculate:
+		\begin{gather*}
+			\begin{split}
+				&P(v=\text{female})P(a_1=\text{red}|v=\text{female})P(a_2=\text{SUV}\mid
+				v=\text{female})P(a_3=\text{imported}\mid v=\text{female}) \\
+				=&\qquad \frac{1}{2} \cdot \frac{7}{16} \cdot \frac{9}{16} \cdot
+				\frac{7}{16} \\
+				=&\qquad \frac{441}{8192} \\
+				\approx&\qquad 0.0538
+			\end{split}
+		\end{gather*}
+		\begin{gather*}
+			\begin{split}
+				&P(v=\text{male})P(a_1=\text{red}\mid v=\text{male})P(a_2=\text{SUV}\mid
+				v=\text{male})P(a_3=\text{imported}\mid v=\text{male}) \\
+				=&\qquad \frac{1}{2} \cdot \frac{9}{16} \cdot \frac{5}{16} \cdot \frac{9}{16}\\
+				=&\qquad \frac{405}{8192} \\
+				\approx&\qquad 0.0494
+			\end{split}
+		\end{gather*}
+
+		Since $0.0538 > 0.0494$, our example's label is \textit{female}. In
+		another way, the car whose features are (red, SUV, imported)
+		is more likely to be bought by a female customer.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Program}
+
+	\subsection{Algorithm}
+
+		\subsubsection{Preprocessing}
+
+			In this section, we will discuss about our algorithm and apply it to the
+			assignment problem.
+
+			We will use matrices and vectors as data structures to
+			transform all of our calculations to matrix operations. To achieve this,
+			all data will be binarized in preprocessing phase. Simply, we will use
+			zero-one vectors to present attributes and labels. A component of this vector 
+			can takes the value 0 or 1 to indicate the absence or presence of the
+			corresponding feature in the instance.
+			
+			To binarize attributes, a function $f$ which maps a $n$-tuple to a
+			zero-one vector whose dimension equals number of features
+			$n_f=\sum_i{|A_i|}$ will be applied to each attribute.
+			\[ f: A_1 \times A_2 \times \ldots \times A_n \to \{0, 1\}^{n_f}\]
+			\[f\big((\text{red}, \text{sport}, \text{domestic})\big) =
+				\bordermatrix{~&\text{red}&\text{yellow}&\text{sport}&\text{SUV}&\text{domestic}&\text{imported} \cr
+					~ & 1 & 0 & 1 & 0 & 1 & 0 \cr}
+			\]
+			
+			To binarize labels, a function $g$ which map a label to a zero-one vector
+			will be applied to labels.
+			\[ g: V \to \{0, 1\}^{\left| V \right|} \]
+			\[ g(\{\text{male}\}) = \bordermatrix{~&\text{female}&\text{male} \cr
+				~ & 0 & 1 \cr}\]
+			
+			Applying $f$ and $g$ along the rows of the training data and test data and
+			stack the result vertically, we will get the training data matrix
+			$\matr{T}$, test data matrix $\matr{T'}$ and label matrix $\matr{L}$.
+			For our problem:
+			
+			\begin{equation*}
+				\matr{T} =
+				\begin{pmatrix}
+					1 & 0 & 0 & 1 & 1 & 0 \\
+					1 & 0 & 0 & 1 & 1 & 0 \\
+					1 & 0 & 0 & 1 & 1 & 0 \\
+					0 & 1 & 0 & 1 & 1 & 0 \\
+					0 & 1 & 0 & 1 & 0 & 1 \\
+					0 & 1 & 1 & 0 & 0 & 1 \\
+					0 & 1 & 1 & 0 & 0 & 1 \\
+					0 & 1 & 1 & 0 & 1 & 0 \\
+					1 & 0 & 1 & 0 & 0 & 1 \\
+					1 & 0 & 0 & 1 & 0 & 1
+				\end{pmatrix}
+				, \qquad 
+				\matr{L} =
+				\begin{pmatrix}
+					0 & 1 \\
+					1 & 0 \\
+					0 & 1 \\
+					1 & 0 \\
+					0 & 1 \\
+					1 & 0 \\
+					0 & 1 \\
+					1 & 0 \\
+					1 & 0 \\
+					0 & 1
+				\end{pmatrix}
+				, \qquad
+				\matr{T} = \begin{pmatrix} 1&0&1&0&0&1 \end{pmatrix}
+			\end{equation*}
+			
+		\subsubsection{Training}
+
+			Here come the interesting part. To know the number of examples for which
+			the label is $v$ and the attribute is $a_i$, multiply the transpose of label
+			matrix $\matr{L}$ with training matrix $\matr{T}$ and the result will be
+			the matrix $\matr{C}$ containing all the numbers we want.
+
+			\[
+				\matr{C} = \matr{L}^\top \matr{T} = 
+				\begin{pmatrix}
+					0 & 1 & 0 & 1 & 0 & 1 & 0 & 1 & 1 & 0 \\
+					1 & 0 & 1 & 0 & 1 & 0 & 1 & 0 & 0 & 1
+				\end{pmatrix}
+				\begin{pmatrix}
+					1 & 0 & 0 & 1 & 1 & 0 \\
+					1 & 0 & 0 & 1 & 1 & 0 \\
+					1 & 0 & 0 & 1 & 1 & 0 \\
+					0 & 1 & 0 & 1 & 1 & 0 \\
+					0 & 1 & 0 & 1 & 0 & 1 \\
+					0 & 1 & 1 & 0 & 0 & 1 \\
+					0 & 1 & 1 & 0 & 0 & 1 \\
+					0 & 1 & 1 & 0 & 1 & 0 \\
+					1 & 0 & 1 & 0 & 0 & 1 \\
+					1 & 0 & 0 & 1 & 0 & 1
+				\end{pmatrix}
+				=
+				\begin{pmatrix}
+					2 & 3 & 3 & 2 & 3 & 2 \\
+					3 & 2 & 1 & 4 & 2 & 3
+				\end{pmatrix}
+			\]
+			Why is this working? According to the definition of matrix multiplication
+			\[
+				C_{ij} = \sum_{k=1}^N L^\top_{ik} T_{kj} = \sum_{k=1}^N L_{ki} T_{kj}
+			\]
+			That is, each element in $\matr{C}$ equals the sum of element-wise product of
+			corresponding column vector from $\matr{L}$ and $\matr{T}$. Each element
+			in the column vector correspond to a sample in training data. Take the
+			first element
+			in $\matr{C}$ as an example:
+
+			\begin{align*}
+				C_{11}
+					 &=0 \cdot 1 + 1 \cdot 1 + 0 \cdot 1 + 1 \cdot 0 + 0 \cdot 0 + 1 \cdot 0 +
+				1 \cdot 0 + 0 \cdot 0 + 1 \cdot 0 + 1 \cdot 1 + 0 \cdot 1 \\
+				&= 2
+			\end{align*}
+			
+			As we can see, just the product of the element correspond to a sample with
+			color \text{red} and label \textit{female}
+			will have value 1, while other product will have value 0. The sum will
+			equal the number of term 1, which is the number of sample with color
+			\textit{red} and label \textit{female}.
+
+			From original dataset, we can calculate the vector $\vec{p}$ containing
+			the priori estimate for each feature and $\vec{c}$ containing the numbers
+			of samples for each label
+
+			\[
+				\vec{c} = \bordermatrix{~&\text{female}&\text{male} \cr
+				                        ~&5 & 5 \cr}
+			\]
+
+			\[
+				\vec{p} = \bordermatrix{
+				~&\text{red}&\text{yellow}&\text{sport}&\text{SUV}&\text{domestic}&\text{imported} \cr
+				~&0.5&0.5&0.5&0.5&0.5&0.5 \cr}
+				\]
+
+				Then matrix $\matr{P}$ containing all the values of $P(a_i|v)$ can be
+				calculated as follow
+
+			\begin{equation}
+				\label{eq:alprob}
+				P_{ij} = \frac{C_{ij} + m p_j}{c_i + m}
+			\end{equation}
+
+			\[\matr{P} =
+				\begin{pmatrix}
+					0.4375 & 0.5625 & 0.5625 & 0.4375 & 0.5625 & 0.4375 \\
+					0.5625 & 0.4375 & 0.3125 & 0.6875 & 0.4375 & 0.5625
+				\end{pmatrix}
+			\]
+
+		\subsubsection{Classifying}
+			Instead of multiplying probalities like in
+			equation \eqref{eq:predict}, we will
+			use natural logarithm to transform multiplication into addition and
+			prevent underflow in our program when multiplying tiny probalities in
+			giant datasets. Because natural logarithm is a monotonically increasing
+			function:
+			\begin{align*}
+				V^* = \argmax_{v \in V} P(v) \prod_i{P(x_i | v)}
+						&= \argmax_{v \in V}\left(\ln\left(P(v) \prod_i{P(x_i |
+						v)}\right)\right) \\
+						&= \argmax_{v \in V}\left(\ln \frac{N(v)}{N} + \sum_i{\ln P(x_i
+						| v)}\right) \\
+						&= \argmax_{v \in V}\left(\ln N(v) - \ln N + \sum_i{\ln P(x_i
+						| v)}\right)
+			\end{align*}
+			
+			As the number of training samples $N$ doesn't depend on the label, the
+			term $\ln N$ can be removed from our equation
+			\[V^* = \argmax_{v \in V}\left(\ln N(v) + \sum_i{\ln P(x_i|v)}\right)\]
+
+
+			To calculate all the value of the expression in parenthesis, add the
+			entrywise natural logarithm of $\vec{c}$ to each row of the product of
+			$\matr{T'}$ and the transpose of $\matr{P}$.
+			
+			\[P'_{i \cdot} = \ln \vec{c} + (\matr{T'}\ln\matr{P}^\top)_{i \cdot}\]
+
+			\[
+				P'_{ij} = \ln c_j + (\matr{T'}\ln\matr{P}^\top)_{ij}
+				        = \ln c_j + \sum_{k=1}^{n_f} T'_{ik}\ln P_{kj}^\top
+								= \ln c_j + \sum_{k=1}^{n_f} T'_{ik}\ln P_{jk}
+			\]
+
+			\[\matr{P'} = \begin{pmatrix}-0.61928338 & -0.70444119 \end{pmatrix}\]
+
+			To find the label that mamixize the probality, we apply a function $h$
+			which is similar to argmax
+			along the rows of $\matr{P'}$ that return the binary vector correspond to
+			the predicted label.
+
+			\[\matr{L'} = \begin{pmatrix}1 & 0\end{pmatrix}\]
+
+			Applying function $g^{-1}$ to above vector, we can find the label
+			\[g^{-1}\left(\begin{pmatrix}1 & 0\end{pmatrix}\right)=\{\text{female}\}\]
+		
+			Our algorithm return the same prediction as previous section.
+
+	\subsection{Implementation}
+
+		Our program is written in Python using NumPy library. Python is a general purpose programming language created by Guido van Rossum
+		and first released in 1991. Thanks to its gentle learning curve and large
+		repository of third-party software, Python is very popular in academia and
+		industry. NumPy is a library for the Python programming language, adding
+		support for large, multi-dimensional arrays and matrices, along with a large
+		collection of high-level mathematical functions to operate on these arrays.
+
+		First, we import library that we will use in our program and set equivalent sample size
+		as given by the assignment. Note that we bind the \code{numpy} to a local
+		name \code{np}, so in our code when we want to use a function called
+		\code{numpy.foo}, we just have to write \code{np.foo}.
+
+		\lstinputlisting[language=Python, firstline=1, lastline=5]{bayes.py}	
+
+		Then we define function $f$, $g$, $h$ and $g^{-1}$, which
+		we will call \code{binarize\_attr}, \code{binarize\_label},
+		\code{argmax} and \code{find\_label}, respectively. The function
+		\code{binarize\_attr} scan through a row in the dataset loop up each feature
+		in \code{features} list. 
+
+		\lstinputlisting[language=Python, firstline=7, lastline=21]{bayes.py}
+
+		To load data from CSV file, use \code{numpy.loadtxt}. Because NumPy
+		consider a vector as a 1D array and a matrix as a 2D array, we have to use
+		\code{numpy.atleast\_2d} to  guarantee that our test set is always a matrix in
+		case there is just one test sample. The
+		dataset will be splited into training set and labels using \code{numpy.split}.
+		
+		\lstinputlisting[language=Python, firstline=24, lastline=26]{bayes.py}
+
+		Number of attributes can be easily determined from the
+		\code{trainset}'s width using its \code{shape} attribute. Using
+		\code{numpy.unique}, we can find labels and the number of sample with each labels in our
+		dataset.
+		
+		\lstinputlisting[language=Python, firstline=28, lastline=29]{bayes.py}
+
+		Finding features is harder. First we define the \code{features}
+		which store all features as a empty list. To make sure that \code{features} include new features in test set
+		that don't appear in the training set, we have to scan through both
+		\code{trainset} and \code{testset} using \code{numpy.concatenate} and
+		\code{numpy.transpose} to loop through each columns instead of rows. In the
+		loop, list of unique values in the column are appended to \code{features}.
+		To find the number of features, simply find the length of each list in
+		\code{features} and add them together.
+
+		\lstinputlisting[language=Python, firstline=32, lastline=34]{bayes.py}
+
+		To find priori estimate for each feature's probality, we also define the
+		\code{priori} which store all priori estimate as a empty list. Then we loop
+		through each list in \code{features} to calculate a list of priori estimate
+		whose length equal the number of attribute values using formula
+		\eqref{eq:priori}. Finally, we use \code{numpy.ravel} to flatten our list.		
+
+		\lstinputlisting[language=Python, firstline=37, lastline=41]{bayes.py}
+
+		Then we apply \code{binarize\_attr} and \code{binarize\_label} along the
+		rows of \code{trainset}, \code{testset} and \code{label} to binarize our
+		data.
+
+		\lstinputlisting[language=Python, firstline=44, lastline=46]{bayes.py}
+
+		We multiply the transpose of 2D array \code{label\_b} with \code{trainset\_b}
+		using \code{@} operator.
+
+		\lstinputlisting[language=Python, firstline=48, lastline=48]{bayes.py}
+
+		Now we will calculate the values of $P(a_i|v)$ using formula
+		\eqref{eq:alprob}.
+		But that formula can't be interpreted as any matrix operation, does that
+		mean we have to use loops? Not necessarily, because NumPy has a powerful
+		feature called \textit{broadcating}. \textit{Broadcasting} provides a mean
+		of vectorizing array operations so that looping occur in C instead Python,
+		which makes our code cleaner and faster. When doing arithmetic operation
+		with a scalar and a 1D array, we can think of the scalar being stretched
+		during the arithmetic operation into an array with the same shape as the 1D
+		array and the operation is done element-wisely. It is the same with 1D
+		array and 2D array, but the 1D array always be stretched vertically by
+		default. The division part is trickier. Because we want to divide element-wisely each
+		row of numerator by denominator, we use NumPy advanced
+		indexing to create a column vector from 1D array \code{label\_count}, so
+		NumPy will stretch it horizontally instead of vertically to match the size of numerator, and then
+		we can divide numerator by denominator element by element.
+
+		\lstinputlisting[language=Python, firstline=51, lastline=51]{bayes.py}
+		
+		To calculate matrix $\matr{P'}$, we also use broadcasting to add 1D array
+		\code{np.log(label\_count)} to 2D array \code{testset\_b @ np.log(prob.T)}.
+		Then we apply function \code{argmax} along the rows of \code{func} to find
+		binary representation of predicted labels.
+
+		\lstinputlisting[language=Python, firstline=52, lastline=53]{bayes.py}
+
+		Funcion \code{find\_label} is then applied along the rows of \code{predict}
+		to find the labels and print it to the screen.
+
+		\lstinputlisting[language=Python, firstline=55, lastline=56]{bayes.py}
+
+		Test this program on Ubuntu 18.04 with Python 3.6.7 and NumPy 1.13.3, we
+		have following result:
+
+		\code{\$ python3 bayes.py data.csv test.csv}
+
+		\code{[['female']]}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conclusion}
+
+	In this assignment, we have delved into building and understanding a Naive Bayesian Classifier. As we go through the content,it could be seen that this algorithm is well suited for data that can be asserted to be independent. Being a probablistic model, it works well for classifying data into multiple directions given the underlying score.
+	
+	This supervised learning method is useful for fraud detection, spam filtering, and any other problem that has these types of features.
+
+	Even though, the condition for the Bayes classification method is conditional independence assumption, which makes it an inaccurate data point-class label association probability estimator in many cases. Because, as you can see in real life situations, the attributes of a tuple, such as a person is mostly dependent of each others like status, age, occupation and income!
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{thebibliography}{80}
+	\bibitem{bib1}
+		Jiawei Han, Micheline Kamber, Jian Pei., \textit{Data Mining: Concepts and Techniques}, 3rd ed. Waltham, Massachusetts: Morgan Kaufmann, 2012
+
+	\bibitem{bib2}
+		Steven Abney, \textit{Semisupervised Learning for Computational Linguistics},
+			London: Chapman \& Hall/CRC, 2008
+	\bibitem{bib3}
+	Powerpoint presentation about Naive Bayes Classifiers from Frank Keller of Saarland University\\
+	\url{http://www2.cs.uh.edu/~arjun/courses/nlp/naive_bayes_keller.pdf}
+\end{thebibliography}
+
+\end{document}
+

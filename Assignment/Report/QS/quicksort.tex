@@ -1,0 +1,428 @@
+
+\documentclass[11pt]{article}
+
+\setlength{\oddsidemargin}{0in}
+\setlength{\evensidemargin}{0in}
+\setlength{\textwidth}{6.5in}
+\setlength{\textheight}{9.5in}
+
+\usepackage{psfig}
+\usepackage{epsfig}
+
+
+\begin{document}
+
+\title{{\bf Quicksort}\\
+\normalsize{(CLRS 7)}}
+
+\date{}
+
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{itemize}
+\item We previously saw how the divide-and-conquer technique can be
+used to design sorting algorithm---Merge-sort
+   \begin{itemize}
+   \item Partition $n$ elements array $A$ into two subarrays of $n/2$ elements
+   each
+   \item Sort the two subarrays recursively
+   \item Merge the two subarrays
+   \end{itemize}
+
+   Running time: $T(n)=2T(n/2)+\Theta(n) \Rightarrow T(n)=\Theta(n\log n)$
+
+\item Another possibility is to divide the elements such that there is
+no need of merging, that is
+   \begin{itemize}
+   \item Partition $A[1...n]$ into subarrays $A'=A[1..q]$ and
+   $A"=A[q+1...n]$ such that all elements in $A"$ are larger than all
+   elements in $A'$.
+   \item Recursively sort $A'$ and $A"$.
+   \item (nothing to combine/merge. $A$ already sorted after sorting $A'$
+    and $A"$)
+   \end{itemize}
+
+\item Pseudo code for {\sc Quicksort}:
+
+\fbox{
+\parbox{5cm}{
+{\sc Quicksort}($A,p,r$) \\
+IF $p<r$ THEN
+\begin{itemize}
+\item[] q={\sc Partition}($A,p,r$)
+\item[] {\sc Quicksort}($A,p,q-1$)
+\item[] {\sc Quicksort}($A,q+1,r$)
+\end{itemize}
+FI
+}}\\
+
+Sort using {\sc Quicksort}($A,1,n$)
+
+\vspace{\baselineskip}
+
+  If $q=n/2$ and we divide in $\Theta(n)$ time, we again get the
+   recurrence $T(n)=2T(n/2)+\Theta(n)$ for the running time
+   $\Rightarrow T(n)=\Theta(n\log n)$
+
+   The problem is that it is hard to develop partition algorithm which
+   always divide $A$ in two halves
+
+
+\fbox{
+\parbox{6cm}{
+{\sc Partition}($A,p,r$) \\
+$x=A[r]$ \\
+$i=p-1$ \\
+FOR $j=p$ TO $r-1$ DO 
+\begin{itemize}
+\item[] IF $A[j]\leq x$ THEN
+	\begin{itemize}
+	\item[] $i=i+1$
+	\item[] Exchange $A[i]$ and $A[j]$
+	\end{itemize}
+\item[] FI	
+\end{itemize}
+OD\\
+Exchange $A[i+1]$ and $A[r]$\\
+RETURN $i+1$
+}}
+  
+\end{itemize}
+
+\vspace{\baselineskip}
+       {\bf {\sc Quicksort} correctness}:
+       \begin{itemize}
+       \item ..easy to show, inductively, if {\sc Partition} works
+	 correctly
+       \item Example:
+	 
+	 \epsfig{file=quicksorteks.eps}
+	 
+       \item{\sc Partition} can be proved correct (by induction) using the
+	 loop invariant:
+	 \begin{itemize}
+	 \item $A[k]\leq x$ for $p\leq k\leq i$
+	 \item $A[k]> x$ for $i+1\leq k\leq j-1$
+	 \item $A[k]=x$ for $k=r$
+	 \end{itemize}
+       \end{itemize}
+       
+       
+       \vspace{\baselineskip}
+	      {\bf {\sc quicksort}  analysis}
+	      
+	      \begin{itemize}
+	      \item {\sc Partition} runs in time $\Theta(r-p)$
+		
+	      \item Running time depends on how well {\sc Partition} divides $A$.
+	      \item In the example it does reasonably well.
+		
+	      \item If array is always partitioned nicely in two halves (partition
+		returns $q=\frac{r-p}{2}$), we have the recurrence $T(n) =
+		2T(n/2) + \Theta(n) \Rightarrow T(n) = \Theta(n\lg n)$.
+		
+		
+	      \item But, in the worst case {\sc Partition} always returns $q = p$
+		or $q=r$ and the running time becomes $T(n)=\Theta(n)+T(0)+T(n-1)
+		\Rightarrow T(n)=\Theta(n^2)$.
+		\begin{itemize}
+		\item and what is maybe even worse, the worst case is when $A$
+		  is already sorted.
+		\end{itemize}
+	      	      
+	      \item So why is it called "quick"-sort? Because it
+	      "often" performs very well---can we theoretically
+	      justify this?
+	      \begin{itemize}
+	      \item Even if all the splits are relatively bad, we get
+		$\Theta(n\log n)$ time:
+		\begin{itemize}
+		\item Example: Split is $\frac{9}{10}n$, $\frac{1}{10}n$.
+		  
+		  $T(n) = T(\frac{9}{10} n) + T(\frac{1}{10} n) + n$
+		  
+		  Solution?
+		  
+		  Guess: $T(n) \leq cn\log n$
+		  
+		  Induction
+		  \begin{eqnarray*}
+		    T(n) & = & T(\frac{9}{10} n) + T(\frac{1}{10} n) + n \\
+		    & \leq & \frac{9cn}{10}\log (\frac{9n}{10}) +
+		    \frac{cn}{10}\log (\frac{n}{10}) + n \\
+		    & \leq & \frac{9cn}{10}\log n + \frac{9cn}{10} \log
+		    (\frac{9}{10}) + \frac{cn}{10}\log n + \frac{cn}{10}\log
+		    (\frac{1}{10}) + n \\
+		    & \leq & cn\log n + \frac{9cn}{10} \log 9 - \frac{9cn}{10}
+		    \log 10 - \frac{cn}{10}\log 10 + n \\
+		    & \leq & cn\log n - n(c\log 10 - \frac{9c}{10} \log 9 - 1) \\
+		  \end{eqnarray*}
+		  
+		  $ T(n) \leq  cn\log n$ if $c\log 10 - \frac{9c}{10} \log 9
+		  - 1 > 0 $ which is definitely true if $c>\frac{10}{\log 10}$
+		\end{itemize}
+		
+	      \item So, in other words, if the splits happen at a constant
+		fraction of $n$ we get $\Theta(n\lg n)$---or, it's almost
+		never bad!
+		
+	      \end{itemize}
+	      \end{itemize}
+
+
+
+
+\section*{Average running time}
+
+The natural question is: what is the average case running time of {\sc
+quicksort}? Is it close to worst-case ($\Theta(n^2)$, or to the best
+case $\Theta(n\lg n)$?  Average time depends on the distribution of
+inputs for which we take the average.
+\begin{itemize}
+\item If we run {\sc quicksort} on a set of inputs that are all almost
+sorted, the average running time will be close to the worst-case.
+
+\item Similarly, if we run {\sc quicksort} on a set of inputs that
+give good splits, the average running time will be close to the
+best-case.
+
+\item If we run {\sc quicksort} on a set of inputs which are picked
+uniformly at random from the space of all possible input permutations,
+then the average case will also be close to the best-case.  Why?
+Intuitively, if any input ordering is equally likely, then we expect
+at least as many good splits as bad splits, therefore on the average a
+bad split will be followed by a good split, and it gets ``absorbed''
+in the good split.
+\end{itemize}
+
+So, under the assumption that all input permutations are equally
+likely, the average time of {\sc Quicksort} is $\Theta(n\lg n)$
+(intuitively). Is this assumption realistic?
+
+\begin{itemize}
+\item Not really. In many cases the input is almost sorted; think of
+rebuilding indexes in a database etc.
+\end{itemize}
+
+
+The question is: how can we make {\sc Quicksort} have a good average time
+irrespective of the input distribution? 
+\begin{itemize}
+\item Using randomization.
+\end{itemize}
+
+
+
+
+
+\section*{Randomization}
+
+
+We consider what we call \emph{randomized algorithms}, that is,
+  algorithms that make some random choices during their execution.
+
+  \begin{itemize}
+  \item Running time of normal \emph{deterministic} algorithm only
+  depend on the input.
+  \item Running time of a randomized algorithm depends not only on
+  input but also on the random choices made by the algorithm.
+  \item Running time of a randomized algorithm is not fixed for a given input!
+
+\item Randomized algorithms have best-case and worst-case running
+times, but the inputs for which these are achieved are not known, they
+can be any of the inputs.
+  \end{itemize}
+
+ We are normally interested in analyzing the \emph{expected} running
+time of a randomized algorithm, that is, the expected (average)
+running time for all inputs of size $n$ \\
+
+  \centerline{$T_e(n)=E_{|X|=n}[T(X)]$}
+
+
+
+\section*{Randomized Quicksort}
+
+\begin{itemize}
+\item We can enforce that all $n!$ permutations are equally likely by
+randomly permuting the input before the algorithm.
+
+\begin{itemize}
+\item Most computers have pseudo-random number generator
+  $random(1,n)$ returning ``random'' number between $1$ and $n$
+
+
+\item Using pseudo-random number generator we can generate a random
+  permutation (such that all $n!$ permutations equally likely) in
+  $O(n)$ time:
+  
+  Choose element in $A[1]$ randomly among elements in $A[1..n]$,
+  choose element in $A[2]$ randomly among elements in $A[2..n]$, 
+  choose element in $A[3]$ randomly among elements in $A[3..n]$,
+  and so on.
+  
+  Note: Just choosing $A[i]$ randomly among elements $A[1..n]$ for
+  all $i$ will not give random permutation! Why?
+\end{itemize}
+
+
+\vspace{\baselineskip}
+
+
+\item Alternatively we can modify {\sc Partition} slightly and exchange last
+element in $A$ with random element in $A$ before partitioning.
+
+\fbox{
+\parbox{5cm}{
+{\sc RandPartition}($A,p,r$) \\
+$i$={\sc Random}($p,r$) \\
+Exchange $A[r]$ and $A[i]$ \\
+RETURN {\sc Partition}($A,p,r$)
+}}\\
+
+\vspace{\baselineskip}
+
+\fbox{
+\parbox{6.5cm}{
+{\sc RandQuicksort}($A,p,r$) \\
+IF $p<r$ THEN
+\begin{itemize}
+\item[] q={\sc RandPartition}($A,p,r$)
+\item[] {\sc RandQuicksort}($A,p,q-1$)
+\item[] {\sc RandQuicksort}($A,q+1,r$)
+\end{itemize}
+FI
+}}\\
+
+\end{itemize}
+
+
+
+
+\section*{Expected Running Time of Randomized Quicksort}
+
+Let $T(n)$ be the running time of {\sc RandQuicksort} for an input of
+size $n$.
+
+
+\begin{itemize}
+\item Running time of {\sc RandQuicksort} is the total running time
+  spent in all {\sc Partition} calls.
+\item {\sc Partition} is called $n$ times
+  \begin{itemize}
+  \item The pivot element $x$ is not included in any recursive calls. 
+  \end{itemize}
+\item One call of {\sc Partition} takes $O(1)$ time plus time proportional
+ to the number of iterations of FOR-loop.
+  \begin{itemize}
+  \item In each iteration of FOR-loop we compare an element with the pivot
+  element.
+  \end{itemize}
+
+$\Downarrow$
+
+If $X$ is the number of comparisons $A[j]\leq x$ performed in {\sc
+Partition} over the entire execution of {\sc RandQuicksort} then the
+running time is $O(n+X)$.
+
+$\Downarrow$
+
+$E[T(n)] = E[O(n+X)] = n + E[X]$
+
+$\Downarrow$
+
+To analyze the expected running time we need to compute $E[X]$
+
+\item To compute $X$ we use $z_1, z_2, \dots, z_n$ to denote the elements
+  in $A$ where $z_i$ is the $i$th smallest element. We also use $Z_{ij}$
+  to denote $\{z_i,z_{i+1},\dots,z_j\}$.
+\item Each pair of elements $z_i$ and $z_j$ are compared at most once
+  (when either of them is the pivot)
+  
+  $\Downarrow$
+  
+  $X=\sum_{i=1}^{n-1}\sum_{j=i+1}^{n} X_{ij}$ where 
+
+  $X_{ij}=\left\{\begin{array}{ll}
+  1 & {\rm If} ~z_i~ {\rm compared}~{\rm to}~ z_i \\
+  0 & {\rm If} ~z_i~ {\rm not}~{\rm compared}~ \rm{to} ~z_i
+\end{array}
+  \right.$
+  
+  $\Downarrow$
+  
+  $\begin{array}{lcl}
+    E[X] &=& E\left[\sum_{i=1}^{n-1}\sum_{j=i+1}^{n} X_{ij}\right] \\
+    &=& \sum_{i=1}^{n-1}\sum_{j=i+1}^{n} E[X_{ij}] \\
+    &=& \sum_{i=1}^{n-1}\sum_{j=i+1}^{n} Pr[z_i ~{\rm compared}~{\rm
+	to}~ z_j]
+  \end{array}$
+  
+\item To compute $Pr[z_i ~{\rm compared}~{\rm to}~ z_j]$ it is useful to
+  consider when two elements are \emph{not} compared.
+  
+  \begin{itemize}
+  \item[] Example: Consider an input consisting of numbers 1 through
+    $n$.
+    
+    Assume first pivot it 7 $\Rightarrow$ first partition separates
+    the numbers into sets $\{1,2,3,4,5,6\}$ and $\{8,9,10\}$.
+    
+    In partitioning, 7 is compared to all numbers. No number from the
+    first set will ever be compared to a number from the second set.
+  \end{itemize}
+  
+  In general, once a pivot $x$, $z_i<x<z_j$, is chosen, we know
+  that $z_i$ and $z_j$ cannot later be compared.
+  
+  On the other hand, if $z_i$ is chosen as pivot before any other
+  element in $Z_{ij}$ then it is compared to each element in
+  $Z_{ij}$. Similar for $z_j$.
+  
+  \begin{itemize}
+  \item[] In example: 7 and 9 are compared because 7 is first item from
+    $Z_{7,9}$ to be chosen as pivot, and 2 and 9 are not compared because the
+    first pivot in $Z_{2,9}$ is 7.
+  \end{itemize}
+  
+  Prior to an element in $Z_{ij}$ being chosen as pivot, the set
+  $Z_{ij}$ is together in the same partition $\Rightarrow$ any element
+  in $Z_{ij}$ is equally likely to be first element chosen as pivot
+  $\Rightarrow$ the probability that $z_i$ or $z_j$ is chosen first in
+  $Z_{ij}$ is $\frac{1}{j-i+1}$
+
+  $\Downarrow$
+
+  $Pr[z_i ~{\rm compared}~{\rm to}~ z_j]=\frac{2}{j-i+1}$
+
+  \item We now have:
+
+  $\begin{array}{lcl}
+  E[X] &=& \sum_{i=1}^{n-1}\sum_{j=i+1}^{n} Pr[z_i ~{\rm compared}~{\rm
+             to}~ z_j] \\
+       &=& \sum_{i=1}^{n-1}\sum_{j=i+1}^{n} \frac{2}{j-i+1} \\
+       &=& \sum_{i=1}^{n-1}\sum_{k=1}^{n-i} \frac{2}{k+1} \\
+       &<& \sum_{i=1}^{n-1}\sum_{k=1}^{n-i} \frac{2}{k} \\
+       &=& \sum_{i=1}^{n-1} O(\log n) \\
+       &=& O(n\log n)
+  \end{array}$  
+
+\item Since best case is $\theta(n \lg n)$ $\Longrightarrow  E[X] =
+\Theta(n \lg n)$ and therefore $E[T(n)] = \Theta(n \lg n)$. 
+
+\end{itemize}
+
+
+
+\vspace{\baselineskip}
+
+ Next time we will see how to make quicksort run in worst-case
+$O(n\log n)$ time.
+
+
+
+
+\end{document}

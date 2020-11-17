@@ -1,0 +1,29 @@
+.data
+	inputRequest:.asciiz "Input integer: "
+	sum: .asciiz "Sum: "
+.text
+
+main: 
+	li $a1 0 # our sum
+	topLoop:
+	la $a0, inputRequest
+	li $v0,4
+	syscall
+	li $v0, 5
+	syscall
+	la $t0,($v0)
+	ble $t0,0, endLoop
+	add $a1, $a1, $t0
+	j topLoop
+	endLoop:
+	#print sum of all positive
+	la $a0,sum
+	li $v0,4
+	syscall
+	la $a0,($a1)
+	li $v0 1
+	syscall
+	
+	#end program
+	li $v0,10
+	syscall
